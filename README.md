@@ -1,2 +1,3 @@
-# starthack
-starthack repository
+# START Hack Repository
+
+Team : ETHSG 1
