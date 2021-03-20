@@ -2,21 +2,19 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <Eigen/Core>
 #include "json_struct.h"
 #include "json.hpp"
+#include <cassert>
 
 
 using json = nlohmann::json;
 
 
 int get_dayoftheweek(int y, int m, int d){
-  int c = y/100;
-  if(m == 1 ||m==2 ) y = y%100-1;
-  else y = y %100;
+//0 on sunday, 6 on saturday
+  return (d += m < 3 ? y-- : y - 2, 23*m/9 + d + 4 + y/4- y/100 + y/400)%7;
 
-  m = (m+10)%12;
-
-  return (d + int(2.6*m - 0.2) - 2*c + y+ y/4 + c/4)%7;
 }
 
 int get_dayoftheyear(int m, int d){
@@ -42,6 +40,7 @@ void get_index(const json& weather_data, const std::string& string, unsigned& in
   int d = std::stoi(day);
   int h = std::stoi(hour);
 
+  std::cout<<"Day of the week: "<<get_dayoftheweek(y,m,d)<<"\n";
   index1 = get_dayoftheweek(y,m,d)* 24 + h;
 
   double precipitation = weather_data[get_dayoftheyear(m, d)*24 + h].value("precipMM",1.0);
@@ -69,7 +68,23 @@ int main(int argc, char const *argv[]) {
   std::cout<<ind1<<" "<<ind2<<std::endl;
   */
 
-  
+  int occ [168][2];
+
+  for(unsigned rat = 0;rat < 19521; rat++){
+    std::string xstart = data[rat].value("start","oops");
+    std::string xend = data[rat].value("end","oops");
+    //
+    unsigned int ind1, ind2;
+    std::cout<< xstart<<"\n";
+    //std::cout<<rat<<"\n";
+    get_index(weather_data, xstart,ind1, ind2);
+    std::cout<< ind1<<"  "<<ind2<<"\n";
+
+    occ[ind1][ind2] += 1;
+    //
+  }
+
+
 
   return 0;
 }

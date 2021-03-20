@@ -6,5 +6,5 @@ CXX_FLAGS =
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/ryan/starthack/include -I/home/ryan/starthack/include/nlohmann -I/home/ryan/starthack/data -I/home/ryan/.local/lib/eigen-3.3.9/Eigen/src/Core 
+CXX_INCLUDES = -I/home/ryan/starthack/include -I/home/ryan/starthack/include/nlohmann -I/home/ryan/starthack/data -I/home/ryan/.local/lib/eigen-3.3.9 
 

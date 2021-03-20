@@ -9,5 +9,5 @@ target_include_directories(
   "${PROJECT_SOURCE_DIR}/include"
   "${PROJECT_SOURCE_DIR}/include/nlohmann"
   "${PROJECT_SOURCE_DIR}/data"
-  "/home/ryan/.local/lib/eigen-3.3.9/Eigen/src/Core"
+  "/home/ryan/.local/lib/eigen-3.3.9"
 )
