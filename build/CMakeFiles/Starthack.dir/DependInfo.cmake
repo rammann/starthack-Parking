@@ -13,6 +13,7 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../include"
   "../include/nlohmann"
   "../data"
+  "/home/ryan/.local/lib/eigen-3.3.9/Eigen/src/Core"
   )
 
 # Targets to which this target links.
