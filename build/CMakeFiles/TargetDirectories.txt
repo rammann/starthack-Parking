@@ -1,0 +1,3 @@
+/home/ryan/starthack/build/CMakeFiles/rebuild_cache.dir
+/home/ryan/starthack/build/CMakeFiles/edit_cache.dir
+/home/ryan/starthack/build/CMakeFiles/Starthack.dir
