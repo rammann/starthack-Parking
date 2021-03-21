@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">parKing</string>
+
+    <string name="messageWithLink"><a href="https://www.google.com/">Forgot Password</a></string>
+</resources>
