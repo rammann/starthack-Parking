@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named predictor
+
+# Build rule for target.
+predictor: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 predictor
+.PHONY : predictor
+
+# fast build rule for target.
+predictor/fast:
+	$(MAKE) -f CMakeFiles/predictor.dir/build.make CMakeFiles/predictor.dir/build
+.PHONY : predictor/fast
+
+#=============================================================================
 # Target rules for targets named Starthack
 
 # Build rule for target.
@@ -122,6 +135,33 @@ Starthack: cmake_check_build_system
 Starthack/fast:
 	$(MAKE) -f CMakeFiles/Starthack.dir/build.make CMakeFiles/Starthack.dir/build
 .PHONY : Starthack/fast
+
+predictor.o: predictor.cpp.o
+
+.PHONY : predictor.o
+
+# target to build an object file
+predictor.cpp.o:
+	$(MAKE) -f CMakeFiles/predictor.dir/build.make CMakeFiles/predictor.dir/predictor.cpp.o
+.PHONY : predictor.cpp.o
+
+predictor.i: predictor.cpp.i
+
+.PHONY : predictor.i
+
+# target to preprocess a source file
+predictor.cpp.i:
+	$(MAKE) -f CMakeFiles/predictor.dir/build.make CMakeFiles/predictor.dir/predictor.cpp.i
+.PHONY : predictor.cpp.i
+
+predictor.s: predictor.cpp.s
+
+.PHONY : predictor.s
+
+# target to generate assembly for a file
+predictor.cpp.s:
+	$(MAKE) -f CMakeFiles/predictor.dir/build.make CMakeFiles/predictor.dir/predictor.cpp.s
+.PHONY : predictor.cpp.s
 
 sbb.o: sbb.cpp.o
 
@@ -158,7 +198,11 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
+	@echo "... predictor"
 	@echo "... Starthack"
+	@echo "... predictor.o"
+	@echo "... predictor.i"
+	@echo "... predictor.s"
 	@echo "... sbb.o"
 	@echo "... sbb.i"
 	@echo "... sbb.s"

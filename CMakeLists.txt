@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 project(Starthack VERSION 1.0)
 
 add_executable(${PROJECT_NAME} sbb.cpp)
+add_executable(predictor predictor.cpp)
 
 target_include_directories(
   ${PROJECT_NAME} PUBLIC

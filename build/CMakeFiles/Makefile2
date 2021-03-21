@@ -53,6 +53,7 @@ CMAKE_BINARY_DIR = /home/ryan/starthack/build
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
+all: CMakeFiles/predictor.dir/all
 all: CMakeFiles/Starthack.dir/all
 
 .PHONY : all
@@ -63,9 +64,37 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
+clean: CMakeFiles/predictor.dir/clean
 clean: CMakeFiles/Starthack.dir/clean
 
 .PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/predictor.dir
+
+# All Build rule for target.
+CMakeFiles/predictor.dir/all:
+	$(MAKE) -f CMakeFiles/predictor.dir/build.make CMakeFiles/predictor.dir/depend
+	$(MAKE) -f CMakeFiles/predictor.dir/build.make CMakeFiles/predictor.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ryan/starthack/build/CMakeFiles --progress-num=3,4 "Built target predictor"
+.PHONY : CMakeFiles/predictor.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/predictor.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ryan/starthack/build/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/predictor.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ryan/starthack/build/CMakeFiles 0
+.PHONY : CMakeFiles/predictor.dir/rule
+
+# Convenience name for target.
+predictor: CMakeFiles/predictor.dir/rule
+
+.PHONY : predictor
+
+# clean rule for target.
+CMakeFiles/predictor.dir/clean:
+	$(MAKE) -f CMakeFiles/predictor.dir/build.make CMakeFiles/predictor.dir/clean
+.PHONY : CMakeFiles/predictor.dir/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/Starthack.dir
