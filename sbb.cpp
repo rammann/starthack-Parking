@@ -8,21 +8,20 @@
 #include "json.hpp"
 #include <cassert>
 
-
 using json = nlohmann::json;
-
 
 int get_dayoftheweek(int y, int m, int d){
 //0 on sunday, 6 on saturday
   return (d += m < 3 ? y-- : y - 2, 23*m/9 + d + 4 + y/4- y/100 + y/400)%7;
-
 }
+
 int daysofmonth(int month){
   if(month == 1 ||month== 3||month== 5||month== 7||month == 8||month == 10||month==12) return 31 ;
   else if(month == 2) return 28;
   else if(month == 4|| month == 6||month ==9||month==11) return 30;
   else return 0;
 }
+
 int get_dayoftheyear(int m, int d){
   int doy = 0;
   for(int i = 1; i < m; i++){
@@ -33,73 +32,13 @@ int get_dayoftheyear(int m, int d){
 }
 
 void get_index(const json& weather_data,  int y,  int m,  int d,  int h, unsigned& index1, unsigned& index2){
-
-
-
-  //std::cout<<"Day of the week: "<<get_dayoftheweek(y,m,d)<<"\n";
   index1 = get_dayoftheweek(y,m,d)* 24 + h;
 
   double precipitation = weather_data[get_dayoftheyear(m, d)*24 + h].value("precipMM",1.0);
   index2 = (bool) precipitation;
 }
 
-void solve(double occd[][2], Eigen::VectorXd& beta){
-  Eigen::MatrixXd x(336,6);
-  Eigen::VectorXd y(336);
-  for(int i = 0; i < 336; i++){
-    y(i) = occd[i/2][i%2];
-    x(i,5) = i%2;
-  }
-  x.block<336,1>(0,0).setOnes();
-  x.block<168,1>(0,1) = Eigen::VectorXd::LinSpaced(168,0,168);
-  x.block<168,1>(168,1) = Eigen::VectorXd::LinSpaced(168,0,168);
-  Eigen::VectorXd help = x.block<336,1>(0,1);
-  for(int i = 0; i < 336; i++){
-    int help = x(i,1);
-    x(i,2) = help*help;
-    x(i,3) = help*help*help;
-    x(i,4) = help*x(i,3);
-  }
-  for(int i=0;i<336;i++){
-    for(int j=0;j<6;j++){
-      std::cout<<x(i,j)<<std::endl;
-    }
-    std::cout<<std::endl;
-  }
-  Eigen::MatrixXd xtx(6,6);
-  xtx = x.transpose()*x;
-  beta = xtx.inverse()*(x.transpose()*y);
-}
-
-
-int main(int argc, char const *argv[]) {
-
-  json data, weather_data;
-
-  std::string path = "/home/ryan/starthack/data";
-  std::string file_name1 = "data";
-  std::string file_name2 = "weather";
-
-  std::ifstream file(path + "/" + file_name1 + ".json");
-  file >> data;
-  std::ifstream file2(path + "/" + file_name2 + ".json");
-  file2 >> weather_data;
-
-  /*
-  std::string x = data[2].value("start","oops");
-  unsigned int ind1, ind2;
-  get_index(weather_data, x,ind1, ind2);
-  std::cout<<ind1<<" "<<ind2<<std::endl;
-  */
-
-   int occ [168][2];
-   double occd[168][2];
-
-  for(int i = 0; i< 168; i++){
-    for(int j = 0; j < 2; j++)
-      occ[i][j]=0;
-  }
-
+void get_occupancy(json& data, json& weather_data, int(&occ)[168][2]){
   for(unsigned rat = 0;rat < 19521; rat++){
     std::string xstart = data[rat].value("start","oops");
     std::string xend = data[rat].value("end","oops");
@@ -145,18 +84,10 @@ int main(int argc, char const *argv[]) {
       else if(sh == eh && sd == ed && sm == em) break;
       else sh++;
     }
-
   }
-  ////////////////////////AVERAGING OVER WEEKS IN YEAR/////////////////////////////////////
+}
+void get_weather_occurrence(json& weather_data, int(&avg)[168][2]){
   int size = weather_data.size();
-  int avg[168][2];
-
-  for(int i = 0; i< 168; i++){
-    for(int j = 0; j < 2; j++){
-      occd[i][j] = occ[i][j];
-      avg[i][j] = 0;
-    }
-  }
 
   for(int i=0; i < size; i++){
     std::string date = weather_data[i].value("date","oops");
@@ -175,6 +106,71 @@ int main(int argc, char const *argv[]) {
     int index2 = (bool)precipitation;
     avg[index1][index2]++;
   }
+}
+
+void solve(double occd[][2], Eigen::VectorXd& beta){
+  Eigen::MatrixXd x(336,6);
+  Eigen::VectorXd y(336);
+  for(int i = 0; i < 336; i++){
+    y(i) = occd[i/2][i%2];
+    x(i,5) = i%2;
+  }
+  x.block<336,1>(0,0).setOnes();
+  x.block<168,1>(0,1) = Eigen::VectorXd::LinSpaced(168,0,168);
+  x.block<168,1>(168,1) = Eigen::VectorXd::LinSpaced(168,0,168);
+  Eigen::VectorXd help = x.block<336,1>(0,1);
+  for(int i = 0; i < 336; i++){
+    int help = x(i,1);
+    x(i,2) = help*help;
+    x(i,3) = help*help*help;
+    x(i,4) = help*x(i,3);
+  }
+  for(int i=0;i<336;i++){
+    for(int j=0;j<6;j++){
+      std::cout<<x(i,j)<<std::endl;
+    }
+    std::cout<<std::endl;
+  }
+  Eigen::MatrixXd xtx(6,6);
+  xtx = x.transpose()*x;
+  beta = xtx.inverse()*(x.transpose()*y);
+}
+
+
+int main(int argc, char const *argv[]) {
+
+  json data, weather_data;
+
+  std::string path = "/home/ryan/starthack/data";
+  std::string file_name1 = "data";
+  std::string file_name2 = "weather";
+
+  std::ifstream file(path + "/" + file_name1 + ".json");
+  file >> data;
+  std::ifstream file2(path + "/" + file_name2 + ".json");
+  file2 >> weather_data;
+
+
+   int occ [168][2];
+   double occd[168][2];
+
+  for(int i = 0; i< 168; i++){
+    for(int j = 0; j < 2; j++)
+      occ[i][j]=0;
+  }
+
+  get_occupancy(data, weather_data, occ);
+
+  ////////////////////////AVERAGING OVER OCCURRENCES/////////////////////////////////////
+  int avg[168][2];
+
+  for(int i = 0; i< 168; i++){
+    for(int j = 0; j < 2; j++){
+      occd[i][j] = occ[i][j];
+      avg[i][j] = 0;
+    }
+  }
+  get_weather_occurrence(weather_data, avg);
 
   for(int i = 0; i< 168; i++){
     for(int j = 0; j < 2; j++){
@@ -183,16 +179,11 @@ int main(int argc, char const *argv[]) {
   }
 
 
-  ////////////////////////PRINTING MATRIX/////////////////////////////////////
-  for(int i = 0; i< 168; i++){
-    for(int j = 0; j < 2; j++){}
-      //std::cout<<occd[i][j]<<" ";
-    //std::cout<<"\n";
-  }
+  ///////////////////////////FINDING WEIGHTS//////////////////////////////////
   Eigen::VectorXd beta(6);
   solve(occd, beta);
   for(int j = 0; j < 6; j++)
     std::cout<<beta[j]<<" ";
-  std::cout<<"\n";
+
   return 0;
 }
